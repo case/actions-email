@@ -1,0 +1,33 @@
+name: "Send Email"
+description: "Send emails via Postmark or Resend"
+author: "github.com/case"
+
+branding:
+  icon: "mail"
+  color: "blue"
+
+inputs:
+  provider:
+    description: 'Email provider to use: "postmark" or "resend"'
+    required: true
+  subject:
+    description: "Email subject line"
+    required: true
+  body_html:
+    description: "HTML body content"
+    required: false
+  body_text:
+    description: "Plain text body content"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Send email
+      shell: bash
+      env:
+        INPUT_PROVIDER: ${{ inputs.provider }}
+        INPUT_SUBJECT: ${{ inputs.subject }}
+        INPUT_BODY_HTML: ${{ inputs.body_html }}
+        INPUT_BODY_TEXT: ${{ inputs.body_text }}
+      run: python3 ${{ github.action_path }}/send_email.py
