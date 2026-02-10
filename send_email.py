@@ -22,6 +22,43 @@ def error(message: str) -> None:
     sys.exit(1)
 
 
+def _mask(value: str) -> str:
+    """Mask a string, showing only the first 3 and last 3 characters."""
+    if len(value) <= 8:
+        return "***"
+    return f"{value[:3]}...{value[-3:]}"
+
+
+def _handle_http_error(provider: str, e: urllib.error.HTTPError, payload: dict) -> None:
+    """Log detailed error info and exit."""
+    raw_body = e.read().decode("utf-8")
+
+    # Try to parse as JSON for structured error info
+    try:
+        error_json = json.loads(raw_body)
+        body_str = json.dumps(error_json, indent=2)
+    except (json.JSONDecodeError, ValueError):
+        body_str = raw_body
+
+    # Log everything useful for debugging
+    print(f"::group::{provider} API Error Details")
+    print(f"HTTP status: {e.code}")
+    print(f"Response body:\n{body_str}")
+    print(f"Response headers:\n{e.headers}")
+
+    # Log the request payload with sensitive fields masked
+    debug_payload = {}
+    for key, value in payload.items():
+        if isinstance(value, str) and ("@" in value or key.lower() in ("from", "to")):
+            debug_payload[key] = _mask(value)
+        else:
+            debug_payload[key] = value
+    print(f"Request payload:\n{json.dumps(debug_payload, indent=2)}")
+    print("::endgroup::")
+
+    error(f"{provider} API error (HTTP {e.code}): {body_str}")
+
+
 def send_resend(from_addr: str, to_addr: str, subject: str, html_body: str, text_body: str) -> None:
     """Send email via Resend API."""
     api_key = get_env("RESEND_API_KEY")
@@ -52,8 +89,7 @@ def send_resend(from_addr: str, to_addr: str, subject: str, html_body: str, text
             print("Email sent successfully via Resend")
             print(f"Response: {json.dumps(body)}")
     except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8")
-        error(f"Resend API error (HTTP {e.code}): {body}")
+        _handle_http_error("Resend", e, payload)
 
 
 def send_postmark(from_addr: str, to_addr: str, subject: str, html_body: str, text_body: str) -> None:
@@ -87,8 +123,7 @@ def send_postmark(from_addr: str, to_addr: str, subject: str, html_body: str, te
             print("Email sent successfully via Postmark")
             print(f"Response: {json.dumps(body)}")
     except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8")
-        error(f"Postmark API error (HTTP {e.code}): {body}")
+        _handle_http_error("Postmark", e, payload)
 
 
 def main() -> None:
