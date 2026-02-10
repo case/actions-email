@@ -79,6 +79,7 @@ def send_resend(from_addr: str, to_addr: str, subject: str, html_body: str, text
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            "User-Agent": "resend-python:2.21.0",
         },
         method="POST",
     )
