@@ -37,3 +37,11 @@ Add a step to your Actions code like this:
     subject: "Build completed"
     body_html: "<h1>Success!</h1>"
 ```
+
+## Testing
+
+To test this locally, make sure you have the `RESEND_API_KEY` env var set. Then run:
+
+```
+$ python3 send_email.py --test --from "sender@email.domain" --to "recipient@email.domain"
+```

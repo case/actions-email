@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Send emails via Postmark or Resend APIs."""
 
+import argparse
 import json
 import os
 import sys
@@ -151,5 +152,26 @@ def main() -> None:
         send_postmark(from_addr, to_addr, subject, html_body, text_body)
 
 
+def test() -> None:
+    """Send a test email via Resend from the command line."""
+    parser = argparse.ArgumentParser(description="Send a test email via Resend")
+    parser.add_argument("--test", action="store_true", required=True)
+    parser.add_argument("--from", dest="from_addr", required=True, help="Sender email address")
+    parser.add_argument("--to", required=True, help="Recipient email address")
+    args = parser.parse_args()
+
+    print(f"Sending test email from {args.from_addr} to {args.to}...")
+    send_resend(
+        from_addr=args.from_addr,
+        to_addr=args.to,
+        subject="actions-email test",
+        html_body="",
+        text_body="This is a test email from actions-email.",
+    )
+
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and "--test" in sys.argv:
+        test()
+    else:
+        main()
