@@ -1,0 +1,25 @@
+# Formatting baseline. See editorconfig.org.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+# shfmt reads this; tools that do not understand it ignore it. Under [*] rather
+# than [*.sh] so it also reaches extensionless scripts, which [*.sh] never matches.
+switch_case_indent = true
+
+# Trailing whitespace can encode a Markdown hard line break; keep it.
+[*.md]
+trim_trailing_whitespace = false
+
+# PEP 8 uses four-space indentation.
+[*.py]
+indent_size = 4
+
+# Extensionless Python scripts, which [*.py] never matches.
+[test/check-action-call]
+indent_size = 4
