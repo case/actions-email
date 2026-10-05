@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "Error: python3 not found on PATH. Run bin/setup." >&2
+  exit 1
+fi
+
+if ! python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))'; then
+  echo "Error: tests need Python 3.10 or later, found $(python3 --version). Run bin/setup." >&2
+  exit 1
+fi
+
+# Offline: the tests stub urlopen and send nothing beyond 127.0.0.1.
+exec python3 -m unittest discover -s test -v

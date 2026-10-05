@@ -1,0 +1,2 @@
+# send_email.py runs on callers' runners, so keep its syntax to Python 3.10.
+target-version = "py310"

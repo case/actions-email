@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+for tool in actionlint editorconfig-checker ruff shellcheck shfmt yamllint; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "Error: $tool not found on PATH. Run bin/setup." >&2
+    exit 1
+  fi
+done
+
+shell_files=(bin/* test/use-stub-provider)
+# ruff skips extensionless files unless they are named
+python_files=(. test/check-action-call)
+
+echo "==> editorconfig-checker"
+editorconfig-checker
+
+echo "==> shellcheck"
+shellcheck "${shell_files[@]}"
+
+# shfmt reads .editorconfig
+echo "==> shfmt"
+shfmt -d "${shell_files[@]}"
+
+echo "==> yamllint"
+yamllint .
+
+# actionlint also runs shellcheck on run: blocks
+echo "==> actionlint"
+actionlint
+
+echo "==> ruff"
+ruff check "${python_files[@]}"
+ruff format --check "${python_files[@]}"
+
+echo
+echo "✅ Lint passed."

@@ -1,0 +1,10 @@
+# Tools the bin/ scripts call from PATH. Plain [tools] only, so no `mise trust`.
+
+[tools]
+actionlint = "1.7.12"
+editorconfig-checker = "4.0.2"
+python = "3.14.6"
+"pipx:yamllint" = "1.38.0"
+ruff = "0.15.22"
+shellcheck = "0.11.0"
+shfmt = "3.13.1"
