@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""Checks the request the action made in CI, after test/use-stub-provider."""
+
+import os
+import sys
+from pathlib import Path
+
+from email_request import RESEND_URL, load_record, problems
+
+repo = Path(__file__).resolve().parent.parent
+if (repo / "pwned").exists():
+    sys.exit("  FAIL: an input was executed as shell")
+
+expected = {
+    "from": os.environ["EMAIL_FROM"],
+    "to": os.environ["EMAIL_TO"],
+    "subject": os.environ["HOSTILE_SUBJECT"],
+    "html": os.environ["HOSTILE_BODY"],
+    "text": os.environ["HOSTILE_BODY"],
+}
+record = load_record(os.environ["EMAIL_STUB_RECORD"])
+found = problems(record, RESEND_URL, expected)
+for problem in found:
+    print(f"  FAIL: {problem}")
+if found:
+    sys.exit(1)
+print("==> The action sent every input verbatim, with a 30 second timeout")

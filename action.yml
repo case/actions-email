@@ -25,9 +25,10 @@ runs:
   steps:
     - name: Send email
       shell: bash
+      # Inputs go through env, so no input value can become script text
       env:
         INPUT_PROVIDER: ${{ inputs.provider }}
         INPUT_SUBJECT: ${{ inputs.subject }}
         INPUT_BODY_HTML: ${{ inputs.body_html }}
         INPUT_BODY_TEXT: ${{ inputs.body_text }}
-      run: python3 ${{ github.action_path }}/send_email.py
+      run: 'python3 "$GITHUB_ACTION_PATH/send_email.py"'

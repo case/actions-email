@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Loads the stub urlopen into every later Python process in a GitHub Actions job.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# HTTPS_PROXY makes a request that somehow bypasses the stub fail instead of reaching a provider.
+{
+  echo "PYTHONPATH=$PWD/test/stub"
+  echo "EMAIL_STUB_RECORD=$RUNNER_TEMP/email-request.json"
+  echo "HTTPS_PROXY=http://127.0.0.1:9"
+} >>"$GITHUB_ENV"
