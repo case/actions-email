@@ -65,7 +65,7 @@ CI runs `bin/ci`, then runs the action itself (`uses: ./`) with hostile inputs a
 
 ## Sending a real test email
 
-This sends real email through Resend and reads the key from 1Password, so it is never part of `bin/test` or CI:
+This sends real email through Resend and reads the key from 1Password, so it is never part of `bin/test` or CI. Copy `.env.op.example` to `.env.op` (git-ignored) and fill in your own 1Password references first:
 
 ```
 op run --env-file=.env.op -- python3 send_email.py --test --from "sender@email.domain" --to "recipient@email.domain"

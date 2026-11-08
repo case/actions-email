@@ -20,7 +20,7 @@ script POSTs one JSON request to Resend or Postmark with the Python standard lib
 - CI runs `bin/ci`, then the action itself with `uses: ./` and hostile inputs against the same
   stub, then `test/check-action-call`. This covers the `action.yml` wiring, which only the
   Actions runtime can run.
-- `.env.op` and `local/` send real email through 1Password references. They are manual only and
+- `.env.op` (git-ignored, copied from `.env.op.example`) and `local/` send real email through 1Password references. They are manual only and
   never part of `bin/test` or CI.
 
 ## CI
